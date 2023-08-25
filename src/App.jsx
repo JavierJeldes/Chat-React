@@ -4,7 +4,7 @@ import Login from "./Pages/Login";
 import "./style.scss";
 
 function App() {
-  return <Register/>;
+  return <Home/>;
 }
 
 export default App;
