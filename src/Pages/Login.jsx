@@ -1,20 +1,40 @@
-import React from 'react'
-import Add from "../img/addAvatar.png"
-
+import React, { useState } from 'react'
+import { useNavigate, Link } from 'react-router-dom';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from "../Firebase";
 
 export const Login = () => {
+
+  const [err, setErr] = useState(false);
+  const navigate = useNavigate();
+
+  const handleSubmit = async(e) => {
+    e.preventDefault();
+
+    const email = e.target[0].value;
+    const password = e.target [1].value;
+
+    try {
+      await signInWithEmailAndPassword(auth, email,password);
+      navigate("/")
+    } catch (err) {
+      setErr(true);
+    }
+  };
+
   return (
     <div className="formContainer">
         <div className="formWrapper">
             <span className="logo">Chat</span>
             <span className="title">Login</span>
-            <form>
-                <input type="email" name="" id="" placeholder='email'/>
-                <input type="password" name="" id="" placeholder='password'/>
+            <form onSubmit={handleSubmit}>
+                <input type="email" placeholder='email'/>
+                <input type="password" placeholder='password'/>
                 
                 <button>Sign in</button>
+                {err && <span> Algo Salio Mal</span>}
             </form>
-            <p>¿No tienes cuenta? Registrate</p>
+            <p>¿No tienes cuenta? <Link to="/register">Registrate</Link></p>
         </div>
     </div>
   )
