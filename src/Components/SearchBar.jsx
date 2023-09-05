@@ -40,35 +40,50 @@ const SearchBar = () => {
     const combinedId = currentUser.uid > user.uid 
     ? currentUser.uid + user.uid 
     : user.uid + currentUser.uid;
-    
+
+    console.log(combinedId)
     try{
       const res = await getDoc(doc(db,"chats",combinedId));
       
+      
       if(!res.exists()){
         await setDoc(doc(db,"chats",combinedId),{messages:[]});
-
-        await updateDoc(doc(db,"userChats", currentUser.uid),{
-        [combinedId+".userInfo"]: {
-          uid:user.uid,
-          displayName:user.displayName,
-          photoURL:user.photoURL
-        },
-        [combinedId+".date"]:serverTimestamp(),
-        });
-
-        console.log("error currentUser")
-        await updateDoc(doc(db,"userChats", user.uid),{
+        
+        try{
+          await updateDoc(doc(db,"userChats", currentUser.uid),{
           [combinedId+".userInfo"]: {
-            uid:currentUser.uid,
-            displayName:currentUser.displayName,
-            photoURL:currentUser.photoURL
+            uid:user.uid,
+            displayName:user.displayName,
+            photoURL:user.photoURL
           },
           [combinedId+".date"]:serverTimestamp(),
           });
 
-          console.log("error user")
+        }catch(err){
+          console.log(currentUser.uid,err)
+        }
+
+        try{
+          await updateDoc(doc(db,"userChats", user.uid),{
+            [combinedId+".userInfo"]: {
+              uid:currentUser.uid,
+              displayName:currentUser.displayName,
+              photoURL:currentUser.photoURL
+            },
+            [combinedId+".date"]:serverTimestamp(),
+            });
+        }catch(err){
+          console.log("ERROR UPDATE USUARIO ACTUAL",err)
+        }
+        
       }
-    }catch(err){console.log("ddd",err)}  
+
+    }catch(err){
+      console.log("ddd",err)
+    }  
+
+    setUser(null)
+    setUsername("")
   };
 
   return (
@@ -95,17 +110,6 @@ const SearchUserInfo = ({user, handleSelect}) => {
   }
 }
 
-// const SearchUserInfoEmpty = () => {
-//   return(
-//     <div className='userChat'>
-//           <span>fgfffffff</span>
-//           <div className="userChatInfo">
-//             <span>dasdasdsa</span>
-//           </div>
-//       </div>
-//   )
-  
-// }
 
 
 

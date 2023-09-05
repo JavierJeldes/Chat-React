@@ -16,7 +16,7 @@ export const Login = (e) => {
     const password = e.target [1].value;
 
     try { 
-        //console.log("resss", {auth, email,password});
+        
         await signInWithEmailAndPassword(auth, email,password);
       navigate("/");
       
